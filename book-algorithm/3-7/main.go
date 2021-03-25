@@ -16,18 +16,24 @@ func main() {
 func solve(r io.Reader, w io.Writer) {
 	scanner := initScanner(r)
 	s := scanner.string()
+	n := len(s)
 	ans := 0
-	for bit := 0; bit < 1<<(len(s)-1); bit++ {
+	for bit := 0; bit < 1<<(n-1); bit++ {
 		tmp := 0
-		for i := 0; i < len(s); i++ {
+		for i := 0; i < n-1; i++ {
 			tmp *= 10
 			val, _ := strconv.Atoi(string(s[i]))
 			tmp += val
-			if bit&(1<<i) == 0 {
+			if bit&(1<<i) > 0 {
 				ans += tmp
 				tmp = 0
 			}
 		}
+		// 先程までのループだと最後の桁が評価されないので、最後の桁を評価してあげる必要がある
+		tmp *= 10
+		val, _ := strconv.Atoi(string(s[n-1]))
+		tmp += val
+		ans += tmp
 	}
 	fmt.Fprintln(w, ans)
 }
