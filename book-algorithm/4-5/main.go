@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math"
 	"os"
 	"strconv"
 )
@@ -17,31 +16,22 @@ func main() {
 func solve(r io.Reader, w io.Writer) {
 	scanner := initScanner(r)
 	n := scanner.int()
-	dc := countDigit(n)
-	count := 0
-	for i := dc; i >= 3; i-- {
-		count += sevenFiveThree(i, 0, n, 0)
-	}
-	fmt.Fprintln(w, count)
+	counter := 0
+	sevenFiveThree(0, n, 0, &counter)
+	fmt.Fprintln(w, counter)
 }
 
-func countDigit(n int) int {
-	if n < 10 {
-		return 1
+func sevenFiveThree(current, n, flag int, counter *int) {
+	if current > n {
+		return
 	}
-	return 1 + countDigit(n/10)
-}
-
-func sevenFiveThree(digit, sft, n, flag int) int {
-	if digit == 0 {
-		if sft <= n && flag == 7 {
-			return 1
-		} else {
-			return 0
-		}
+	if flag == 7 {
+		*counter += 1
 	}
 
-	return sevenFiveThree(digit-1, sft+3*int(math.Pow10(digit-1)), n, flag|1) + sevenFiveThree(digit-1, sft+5*int(math.Pow10(digit-1)), n, flag|2) + sevenFiveThree(digit-1, sft+7*int(math.Pow10(digit-1)), n, flag|4)
+	sevenFiveThree(10*current+3, n, flag|1, counter)
+	sevenFiveThree(10*current+5, n, flag|2, counter)
+	sevenFiveThree(10*current+7, n, flag|4, counter)
 }
 
 type Scanner struct {
